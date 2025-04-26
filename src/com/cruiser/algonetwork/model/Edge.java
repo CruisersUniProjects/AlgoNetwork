@@ -15,10 +15,12 @@ public class Edge {
     }
 
 
-    public Edge(int from, int to, int capacity){
+    public Edge(int from, int to, long capacity){
+        if (capacity < 0) throw new IllegalArgumentException("Capacity can't be negative");
+        this.capacity = capacity;
         this.from = from;
         this.to = to;
-        this.capacity = capacity;
+
     }
 
 
