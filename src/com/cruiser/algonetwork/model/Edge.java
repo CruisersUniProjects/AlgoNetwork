@@ -59,7 +59,7 @@ public class Edge {
     public long getRemainingCapacity(){
         return capacity - flow;
     }
-    public void addAugmentedPath(long bottleNeck){
+    public void augment(long bottleNeck){
         flow += bottleNeck;
         residual.flow -= bottleNeck;
     }

@@ -1,6 +1,8 @@
 package com.cruiser.algonetwork.model;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class Graph {
 
@@ -49,6 +51,53 @@ public class Graph {
         } catch(IllegalArgumentException e){
             System.out.printf("Edge creation failed for the edge from %d to %d %nReason: capacity can't be negative", from, to);
         }
+    }
+
+    public long getMaxFlow(){
+
+        if (solved) return maxFlow;
+        solved = true;
+        long flow;
+        do{
+            visitedToken++; //resetting the visited nodes array
+            flow = bfs();
+            maxFlow += flow;
+        }while(flow != 0);
+
+        return maxFlow;
+    }
+
+    private long bfs(){
+
+        Queue<Integer> queue = new ArrayDeque<>(nodeCount);
+        visitedNodes[sourceNode] = visitedToken;
+        queue.offer(sourceNode); // Throws an exception if the queue overflows...
+
+        Edge[] previous = new Edge[nodeCount];
+        while(!queue.isEmpty()){
+            int node = queue.poll();
+            if (node == sinkNode) break;
+            for(Edge edge: graph[node]){
+                long capacity = edge.getRemainingCapacity();
+                if((capacity > 0) && (visitedNodes[edge.getTo()] == visitedToken)){
+                    visitedNodes[edge.getTo()] = visitedToken;
+                    previous[edge.getTo()] = edge;
+                    queue.offer(edge.getTo());
+                }
+            }
+        }
+
+        if (previous[sinkNode] == null) return 0;
+
+        long bottleNeck = Long.MAX_VALUE;
+
+        for(Edge edge = previous[sinkNode]; edge != null; edge = previous[edge.getFrom()])
+            bottleNeck = Math.min(bottleNeck, edge.getRemainingCapacity());
+
+        for(Edge edge = previous[sinkNode]; edge != null; edge = previous[edge.getFrom()])
+            edge.augment(bottleNeck);
+
+        return bottleNeck;
     }
 
 
