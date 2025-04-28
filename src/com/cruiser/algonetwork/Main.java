@@ -35,7 +35,7 @@ public class Main {
             System.out.println("Do you want to print additional information?");
             System.out.println("  y: show augmented paths and final edge flows");
             System.out.println("  n: only print the maximum flow");
-            System.out.print(":  ");
+            System.out.print("choice:  ");
             choice = scanner.nextLine().trim();
         } while (!choice.equalsIgnoreCase("y") && !choice.equalsIgnoreCase("n"));
         return choice.equalsIgnoreCase("y");
