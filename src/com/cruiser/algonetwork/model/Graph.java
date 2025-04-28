@@ -2,25 +2,26 @@ package com.cruiser.algonetwork.model;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Queue;
 
 public class Graph {
 
     // To avoid overflow, set infinity to a value less than Long.MAX_VALUE;
     // Handle with caution
-    static final long INF = Long.MAX_VALUE / 2;
+//    static final long INF = Long.MAX_VALUE / 2;
 
     // Might not be wanted when it comes to our case...
     private final int nodeCount;
     private final int sourceNode;
     private final int sinkNode;
     private int visitedToken = 1;
-    private int[] visitedNodes;
-    private boolean solved;
+    private final int[] visitedNodes;
+//    private boolean solved;
     private long maxFlow;
 
     // to remember the edges node wise
-    private ArrayList<Edge>[] graph;
+    private final ArrayList<Edge>[] graph;
 
     @SuppressWarnings("unchecked") // Suppressing warning for generic array creation.
     public Graph(int nodeCount){ // Java does not allow direct creation of generic arrays (like ArrayList<Edge>[])
@@ -54,21 +55,32 @@ public class Graph {
         }
     }
 
-    public long getMaxFlow(){
+    public void printMaxFlow(boolean print){
 
-        if (solved) return maxFlow;
-        solved = true;
+        if (print) System.out.println("\n   --- Steps of computing the max flow ---\n");
+
+        long startNanos = System.nanoTime();
         long flow;
+        int iteration = 1;
         do{
             visitedToken++; //resetting the visited nodes array
-            flow = bfs();
+            flow = bfs(print, iteration);
             maxFlow += flow;
+            iteration++;
         }while(flow != 0);
+        long elapsedNanos = System.nanoTime() - startNanos;
+        System.out.println("\n   --- Base information ---\n");
+        System.out.printf("Computation time: %.3f ms%nMaxFlow: %d%nNode Count: %d%n",
+                elapsedNanos / 1_000_000.0,
+                maxFlow,
+                nodeCount
+        );
 
-        return maxFlow;
+        if (print) printEdgeFlows();
+
     }
 
-    private long bfs(){
+    private long bfs(boolean print, int iteration){
 
         Queue<Integer> queue = new ArrayDeque<>(nodeCount);
         visitedNodes[sourceNode] = visitedToken;
@@ -98,8 +110,37 @@ public class Graph {
         for(Edge edge = previous[sinkNode]; edge != null; edge = previous[edge.getFrom()])
             edge.augment(bottleNeck);
 
+
+        if (print) {
+            System.out.print("Step: " + iteration + " | Bottleneck: " + bottleNeck + " | Path: ");
+
+            Deque<Edge> stack = new ArrayDeque<>();
+            for (Edge e = previous[sinkNode]; e != null; e = previous[e.getFrom()]) {
+                stack.push(e);
+            }
+
+            System.out.print(sourceNode);
+            while (!stack.isEmpty()) {
+                Edge e = stack.pop();
+                System.out.print(" -> " + e.getTo());
+            }
+            System.out.println();
+        }
+
         return bottleNeck;
     }
+
+    public void printEdgeFlows() {
+        System.out.println("\n   --- flows on original edges ---\n");
+        for (int u = 0; u < nodeCount; u++) {
+            for (Edge e : graph[u]) {
+                if (!e.isResidual()) {
+                    System.out.printf("from: %d | to: %d | flow: %d%n", e.getFrom(), e.getTo(), e.getFlow());
+                }
+            }
+        }
+    }
+
 
 
 }

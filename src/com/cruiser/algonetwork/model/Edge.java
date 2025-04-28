@@ -32,20 +32,9 @@ public class Edge {
         return to;
     }
 
-    public long getCapacity() {
-        return capacity;
-    }
 
     public long getFlow() {
         return flow;
-    }
-
-    public Edge getResidual() {
-        return residual;
-    }
-
-    public void setFlow(long flow) {
-        this.flow = flow;
     }
 
     public void setResidual(Edge residual) {

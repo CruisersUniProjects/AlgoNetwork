@@ -4,16 +4,15 @@ import com.cruiser.algonetwork.io.EdgeConfig;
 import com.cruiser.algonetwork.io.GraphFileHandler;
 import com.cruiser.algonetwork.model.Graph;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
 
-        System.out.printf("Hello and welcome!");
+        System.out.println("Hello and welcome!");
 
         GraphFileHandler graphFileHandler = new GraphFileHandler();
         graphFileHandler.initialize();
-//        System.out.println(graphFileHandler.getEdges()[2].from());
-//        System.out.println(graphFileHandler.getEdges()[2].to());
-//        System.out.println(graphFileHandler.getEdges()[2].capacity());
 
         Graph graph = new Graph(graphFileHandler.getNodeCount());
         for(EdgeConfig edge: graphFileHandler.getEdges()){
@@ -24,8 +23,21 @@ public class Main {
             );
         }
 
-        System.out.println(graph.getMaxFlow());
+        graph.printMaxFlow(askPrintAdditionalInfo());
 
 
+    }
+
+    public static boolean askPrintAdditionalInfo() {
+        Scanner scanner = new Scanner(System.in);
+        String choice;
+        do {
+            System.out.println("Do you want to print additional information?");
+            System.out.println("  y: show augmented paths and final edge flows");
+            System.out.println("  n: only print the maximum flow");
+            System.out.print(":  ");
+            choice = scanner.nextLine().trim();
+        } while (!choice.equalsIgnoreCase("y") && !choice.equalsIgnoreCase("n"));
+        return choice.equalsIgnoreCase("y");
     }
 }
