@@ -34,6 +34,7 @@ public class Graph {
         for(int i = 0; i < nodeCount; i++){
             graph[i] = new ArrayList<>(); // Java can imply the type for diamond operator
         }
+        visitedNodes = new int[nodeCount];
     }
 
     public void eddEdge(int from, int to,long capacity){
@@ -79,7 +80,7 @@ public class Graph {
             if (node == sinkNode) break;
             for(Edge edge: graph[node]){
                 long capacity = edge.getRemainingCapacity();
-                if((capacity > 0) && (visitedNodes[edge.getTo()] == visitedToken)){
+                if((capacity > 0) && (visitedNodes[edge.getTo()] != visitedToken)){
                     visitedNodes[edge.getTo()] = visitedToken;
                     previous[edge.getTo()] = edge;
                     queue.offer(edge.getTo());
